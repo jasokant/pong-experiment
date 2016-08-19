@@ -16,7 +16,7 @@ app.get('/', function(req, res, next){
 app.ws('/', function(ws, req) {
   ws.on('message', function(msg) {
     console.log(msg);
-    ws.send(msg);
+    setTimeout(function(){ws.send(msg);}, 100);
   });
   console.log('socket', req.testing);
 });
