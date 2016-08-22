@@ -1,24 +1,21 @@
-var express = require('express');
-var app = express();
-var expressWs = require('express-ws')(app);
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-app.use(function (req, res, next) {
-  console.log('middleware');
-  req.testing = 'testing';
-  return next();
+app.get('/', function(req, res){
+  res.sendfile('index.html');
 });
 
-app.get('/', function(req, res, next){
-  console.log('get route', req.testing);
-  res.end();
-});
+io.on('connection', function(socket){
+  console.log('a user connected');
 
-app.ws('/', function(ws, req) {
-  ws.on('message', function(msg) {
-    console.log(msg);
-    setTimeout(function(){ws.send(msg);}, 100);
+  socket.on('gamma', function (data) {
+    console.log(data);
+    socket.broadcast.emit('gamma', data);
   });
-  console.log('socket', req.testing);
+
 });
 
-app.listen(4000);
+http.listen(4000, function(){
+  console.log('listening on *:4000');
+});

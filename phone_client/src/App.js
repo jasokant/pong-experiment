@@ -8,39 +8,13 @@ class App extends Component {
   constructor() {
     super();
 
-    var socket = io.connect('http://td-mbp-04.local:4000', {'forceNew': true});
+    var socket = io.connect('http://td-mbp-04.local:4000', {'forceNew': false});
     this.timeout = 100;
 
-    this.whenLast = new Date();
-
-    var e = new Event("keydown");
-    e.keyCode=38;
-    e.which=e.keyCode;
-
-    var f = new Event("keydown");
-    f.keyCode=40;
-    f.which=f.keyCode;
-
-    var g = new Event("keyup");
-    g.keyCode=38;
-    g.which=e.keyCode;
-
-    var h = new Event("keyup");
-    h.keyCode=40;
-    h.which=h.keyCode;
-
-    socket.on('gamma',(data) => {
-        if(data < -15) {
-
-          document.dispatchEvent(e);
-          setTimeout(function(){document.dispatchEvent(g);},1)
-
-        } else if(data > 15){
-
-          document.dispatchEvent(f);
-          setTimeout(function(){document.dispatchEvent(h);},1)
-        }
-
+    socket.on('gamma',function(data) {
+      // console.log(data);
+      // alert(data);
+      this.emit('test1', 'test1');
     });
 
     // this.playerWebSocket.on('connect',function() {
@@ -67,6 +41,15 @@ class App extends Component {
     //   socket.emit('gamma', event.gamma);
     // }
 
+    // window.setInterval(function(){
+    //   socket.emit('gamma', "1");
+    // }, 10);
+
+    window.addEventListener("deviceorientation", function(event) {
+      if (event.gamma !== undefined) {
+        socket.emit('gamma', event.gamma);
+      }
+    }, true);
   }
 
   handlePlayerOneDeviceOrientationChange = (event) => {
@@ -91,8 +74,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Pong
-          paddleSpeed={20}/>
+
       </div>
     );
   }
